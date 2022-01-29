@@ -92,14 +92,24 @@ jobs:
          
     - name: 'Terraform Plan'
       uses: hashicorp/terraform-github-actions@master
+      env:
+        TF_VAR_my_public_key: ${{ secrets.AZURE_VM_SSH_KEY }}
       with:
         tf_actions_version: 0.14.8
         tf_actions_subcommand: 'plan'
         tf_actions_working_dir: "./terraform"
  
+steps:
+  - run: terraform apply -auto-approve
+    env:
+      TF_VAR_myPublicKey: ${{ secrets.AZURE_VM_SSH_KEY }}
+
+
     #- name: Terraform Apply
     #  if: github.ref == 'refs/heads/main'
     #  uses: hashicorp/terraform-github-actions@master
+    #  env:
+    #    TF_VAR_my_public_key: ${{ secrets.AZURE_VM_SSH_KEY }}
     #  with:
     #    tf_actions_version: 0.14.8
     #    tf_actions_subcommand: 'applya'

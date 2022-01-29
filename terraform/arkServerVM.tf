@@ -79,7 +79,7 @@ resource "azurerm_linux_virtual_machine" "arkVM" {
 
 resource "azurerm_managed_disk" "dataDisk1" {
   name                 = "arkDataDisk1"
-  location             = "Soutch Central US"
+  location             = azurerm_resource_group.arkRG.location
   resource_group_name  = azurerm_resource_group.arkRG.name
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
@@ -99,7 +99,7 @@ resource "azurerm_virtual_machine_data_disk_attachment" "vm1DataDiskAttach" {
     azurerm_managed_disk.dataDisk1
   ]
   managed_disk_id    = azurerm_managed_disk.dataDisk1.id
-  virtual_machine_id = azurerm_virtual_machine.arkVM.id
+
   lun                = "4"
   caching            = "ReadWrite"
 }

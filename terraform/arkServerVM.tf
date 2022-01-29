@@ -41,7 +41,7 @@ resource "azurerm_network_security_group" "NSG1" {
   location            = azurerm_resource_group.arkRG.location
   resource_group_name = azurerm_resource_group.arkRG.name
 
-  security_rule "1" {
+  security_rule  {
     name                       = "allowSSH"
     priority                   = 100
     direction                  = "Inbound"
@@ -52,7 +52,7 @@ resource "azurerm_network_security_group" "NSG1" {
     source_address_prefixes    = ["70.191.107.0/24", "98.160.98.0/24"]
     destination_address_prefix = "*"
   }
-  security_rule "2" {
+  security_rule  {
     name                       = "allowArkTraffic"
     priority                   = 105
     direction                  = "Inbound"

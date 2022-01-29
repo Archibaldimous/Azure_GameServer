@@ -86,13 +86,14 @@ resource "azurerm_managed_disk" "dataDisk1" {
   disk_size_gb         = "256"
 }
 
-resource "azurerm_management_lock" "dataDiskLock" {
+/*resource "azurerm_management_lock" "dataDiskLock" {
   name       = "dataDisk1Lock"
   scope      = azurerm_managed_disk.dataDisk1.id
   lock_level = "CanNotDelete"
   notes      = "Locked to avoid fuckery"
 
 }
+*/
 resource "azurerm_virtual_machine_data_disk_attachment" "vm1DataDiskAttach" {
   depends_on = [
     azurerm_linux_virtual_machine.arkVM,

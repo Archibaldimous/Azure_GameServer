@@ -99,7 +99,7 @@ resource "azurerm_virtual_machine_data_disk_attachment" "vm1DataDiskAttach" {
     azurerm_managed_disk.dataDisk1
   ]
   managed_disk_id    = azurerm_managed_disk.dataDisk1.id
-  virtual_machine_id = azurerm_linux_virtual_machine.arkVM
+  virtual_machine_id = azurerm_linux_virtual_machine.arkVM.id
   lun                = "4"
   caching            = "ReadWrite"
 }

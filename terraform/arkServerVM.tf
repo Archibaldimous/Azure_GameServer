@@ -71,8 +71,6 @@ resource "azurerm_network_interface" "arkVM1NIC" {
   ]
   location                  = azurerm_resource_group.arkRG.location
   resource_group_name       = azurerm_resource_group.arkRG.name
-  network_security_group_id = azurerm_network_security_group.NSG1.id
-
 
   ip_configuration {
     name                          = "internal"
@@ -81,6 +79,11 @@ resource "azurerm_network_interface" "arkVM1NIC" {
     private_ip_address            = "10.0.0.69"
     public_ip_address_id          = azurerm_public_ip.arkVM1PIP.id
   }
+}
+
+resource "azurerm_network_interface_security_group_association" "example" {
+  network_interface_id      = azurerm_network_interface.arkVM1NIC.id
+  network_security_group_id = azurerm_network_security_group.NSG1.id
 }
 
 

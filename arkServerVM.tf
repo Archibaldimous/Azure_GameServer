@@ -2,45 +2,61 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "example" {
-  name     = "example-resources"
-  location = "West Europe"
+resource "azurerm_resource_group" "arkRG" {
+  name     = "arkServerRG"
+  location = "South Central US"
 }
 
-resource "azurerm_virtual_network" "example" {
-  name                = "example-network"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+resource "azurerm_virtual_network" "Vnet1" {
+  name                = "arkVnet1"
+  address_space       = ["10.0.0.0/18"]
+  location            = azurerm_resource_group.arkRG.location
+  resource_group_name = azurerm_resource_group.arkRG.name
 }
 
-resource "azurerm_subnet" "example" {
-  name                 = "internal"
-  resource_group_name  = azurerm_resource_group.example.name
-  virtual_network_name = azurerm_virtual_network.example.name
-  address_prefixes     = ["10.0.2.0/24"]
+resource "azurerm_subnet" "Snet1" {
+  name                 = "Snet1"
+  resource_group_name  = azurerm_resource_group.arkRG.name
+  virtual_network_name = azurerm_virtual_network.Vnet1.name
+  address_prefixes     = ["10.0.0.0/18"]
 }
 
-resource "azurerm_network_interface" "example" {
-  name                = "example-nic"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+resource "azurerm_network_interface" "arkVM1NIC" {
+  name                = "arkVM1NIC"
+  location            = azurerm_resource_group.arkRG.location
+  resource_group_name = azurerm_resource_group.arkRG.name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.example.id
-    private_ip_address_allocation = "Dynamic"
+    subnet_id                     = azurerm_subnet.Snet1.id
+    private_ip_address_allocation = "Static"
+    private_ip_address            = "10.0.0.69"
   }
 }
+resource "azurerm_managed_disk" "dataDisk1" {
+  name                 = "arkDataDisk1"
+  location             = "Soutch Central US"
+  resource_group_name  = azurerm_resource_group.arkRG.name
+  storage_account_type = "Standard_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = "256"
+}
 
-resource "azurerm_linux_virtual_machine" "example" {
-  name                = "example-machine"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
+resource "azurerm_management_lock" "dataDiskLock" {
+  name       = "dataDisk1Lock"
+  scope      = azurerm_managed_disk.dataDisk1.id
+  lock_level = "CanNotDelete"
+  notes      = "Locked to avoid fuckery"
+}
+
+resource "azurerm_linux_virtual_machine" "arkVM" {
+  name                = "arkVM1-ragnarok"
+  resource_group_name = azurerm_resource_group.arkRG
+  location            = azurerm_resource_group.arkRG.location
   size                = "Standard_F2"
   admin_username      = "adminuser"
   network_interface_ids = [
-    azurerm_network_interface.example.id,
+    azurerm_network_interface.arkVM1NIC.id
   ]
 
   admin_ssh_key {
@@ -54,9 +70,16 @@ resource "azurerm_linux_virtual_machine" "example" {
   }
 
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    publisher = "canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts-gen2"
     version   = "latest"
   }
+}
+
+resource "azurerm_virtual_machine_data_disk_attachment" "vm1DataDiskAttach" {
+  managed_disk_id    = azurerm_managed_disk.dataDisk1.id
+  virtual_machine_id = azurerm_virtual_machine.arkVM.id
+  lun                = "4"
+  caching            = "ReadWrite"
 }

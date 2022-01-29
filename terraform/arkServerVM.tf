@@ -47,21 +47,7 @@ resource "azurerm_network_interface" "arkVM1NIC" {
     private_ip_address            = "10.0.0.69"
   }
 }
-resource "azurerm_managed_disk" "dataDisk1" {
-  name                 = "arkDataDisk1"
-  location             = "Soutch Central US"
-  resource_group_name  = azurerm_resource_group.arkRG.name
-  storage_account_type = "Standard_LRS"
-  create_option        = "Empty"
-  disk_size_gb         = "256"
-}
 
-resource "azurerm_management_lock" "dataDiskLock" {
-  name       = "dataDisk1Lock"
-  scope      = azurerm_managed_disk.dataDisk1.id
-  lock_level = "CanNotDelete"
-  notes      = "Locked to avoid fuckery"
-}
 
 resource "azurerm_linux_virtual_machine" "arkVM" {
   name                = "arkVM1-ragnarok"
@@ -91,6 +77,22 @@ resource "azurerm_linux_virtual_machine" "arkVM" {
   }
 }
 
+resource "azurerm_managed_disk" "dataDisk1" {
+  name                 = "arkDataDisk1"
+  location             = "Soutch Central US"
+  resource_group_name  = azurerm_resource_group.arkRG.name
+  storage_account_type = "Standard_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = "256"
+}
+
+resource "azurerm_management_lock" "dataDiskLock" {
+  name       = "dataDisk1Lock"
+  scope      = azurerm_managed_disk.dataDisk1.id
+  lock_level = "CanNotDelete"
+  notes      = "Locked to avoid fuckery"
+
+}
 resource "azurerm_virtual_machine_data_disk_attachment" "vm1DataDiskAttach" {
   depends_on = [
     azurerm_linux_virtual_machine.arkVM,

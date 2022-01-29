@@ -53,7 +53,7 @@ resource "azurerm_linux_virtual_machine" "arkVM" {
   name                = "arkVM1-ragnarok"
   resource_group_name = azurerm_resource_group.arkRG.name
   location            = azurerm_resource_group.arkRG.location
-  size                = "Standard_F2"
+  size                = "Standard_B2s"
   admin_username      = "adminuser"
   network_interface_ids = [
     azurerm_network_interface.arkVM1NIC.id

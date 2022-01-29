@@ -1,10 +1,10 @@
 terraform {
-    backend "azurerm" {
-        resource_group_name  = "cloud-shell-storage-southcentralus"
-        storage_account_name = "cs71003200121b9a285"
-        container_name       = "terraform-state"
-        key                  = "terraform.tfstate"
-    }
+  backend "azurerm" {
+    resource_group_name  = "cloud-shell-storage-southcentralus"
+    storage_account_name = "cs71003200121b9a285"
+    container_name       = "terraform-state"
+    key                  = "terraform.tfstate"
+  }
 }
 
 provider "azurerm" {
@@ -13,7 +13,7 @@ provider "azurerm" {
 }
 
 variable "myPublicKey" {
-  
+
 }
 
 resource "azurerm_resource_group" "arkRG" {
@@ -35,16 +35,50 @@ resource "azurerm_subnet" "Snet1" {
   address_prefixes     = ["10.0.0.0/18"]
 }
 
-resource "azurerm_network_interface" "arkVM1NIC" {
-  name                = "arkVM1NIC"
+
+resource "azurerm_network_security_group" "NSG1" {
+  name                = "arkVMNSG"
   location            = azurerm_resource_group.arkRG.location
   resource_group_name = azurerm_resource_group.arkRG.name
+
+  security_rule "1" {
+    name                       = "allowSSH"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefixes    = ["70.191.107.0/24", "98.160.98.0/24"]
+    destination_address_prefix = "*"
+  }
+  security_rule "2" {
+    name                       = "allowArkTraffic"
+    priority                   = 105
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_ranges    = ["7777", "7778", "27015"]
+    source_address_prefix      = "Internet"
+    destination_address_prefix = "*"
+  }
+}
+resource "azurerm_network_interface" "arkVM1NIC" {
+  name = "arkVM1NIC"
+  depends_on = [
+    azurerm_public_ip.arkVM1PIP
+  ]
+  location            = azurerm_resource_group.arkRG.location
+  resource_group_name = azurerm_resource_group.arkRG.name
+
 
   ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.Snet1.id
     private_ip_address_allocation = "Static"
     private_ip_address            = "10.0.0.69"
+    public_ip_address_id          = azurerm_public_ip.arkVM1PIP.id
   }
 }
 
@@ -75,6 +109,13 @@ resource "azurerm_linux_virtual_machine" "arkVM" {
     sku       = "20_04-lts-gen2"
     version   = "latest"
   }
+}
+
+resource "azurerm_public_ip" "arkVM1PIP" {
+  name                = "arkPIP1"
+  location            = azurerm_resource_group.arkRG.location
+  resource_group_name = azurerm_resource_group.arkRG.name
+  allocation_method   = "Static"
 }
 
 resource "azurerm_managed_disk" "dataDisk1" {

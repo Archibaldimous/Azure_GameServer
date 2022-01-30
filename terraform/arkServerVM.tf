@@ -98,7 +98,7 @@ resource "azurerm_linux_virtual_machine" "arkVM" {
   ]
 
   admin_ssh_key {
-    username   = "adminuser"
+    username   = "mason"
     public_key = var.myPublicKey
   }
 

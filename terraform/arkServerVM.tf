@@ -57,9 +57,9 @@ resource "azurerm_network_security_group" "NSG1" {
     priority                   = 105
     direction                  = "Inbound"
     access                     = "Allow"
-    protocol                   = "Tcp"
+    protocol                   = "Any"
     source_port_range          = "*"
-    destination_port_ranges    = ["7777", "7778", "27015", "443", "80"]
+    destination_port_ranges    = ["7777", "7778", "27015", "443", "80","27020"]
     source_address_prefix      = "Internet"
     destination_address_prefix = "*"
   }
@@ -92,7 +92,7 @@ resource "azurerm_linux_virtual_machine" "arkVM" {
   resource_group_name = azurerm_resource_group.arkRG.name
   location            = azurerm_resource_group.arkRG.location
   size                = "Standard_D4s_v3"
-  admin_username      = "adminuser"
+  admin_username      = "mason"
   network_interface_ids = [
     azurerm_network_interface.arkVM1NIC.id
   ]

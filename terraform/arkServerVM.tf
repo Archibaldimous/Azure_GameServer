@@ -49,7 +49,7 @@ resource "azurerm_network_security_group" "NSG1" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefixes    = ["70.191.107.0/24", "98.160.98.0/24"]
+    source_address_prefixes    = ["70.191.107.0/24", "98.160.98.0/24", "70.185.205.0/24"]
     destination_address_prefix = "*"
   }
   security_rule {
@@ -149,3 +149,5 @@ resource "azurerm_virtual_machine_data_disk_attachment" "vm1DataDiskAttach" {
   lun                = "4"
   caching            = "ReadWrite"
 }
+
+

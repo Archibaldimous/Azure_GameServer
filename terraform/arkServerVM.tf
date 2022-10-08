@@ -172,11 +172,11 @@ resource "azurerm_managed_disk" "dataDisk1" {
 */
 resource "azurerm_virtual_machine_data_disk_attachment" "vm1DataDiskAttach" {
   depends_on = [
-    azurerm_linux_virtual_machine.MineCraftVM,
+    azurerm_windows_virtual_machine.MineCraftVM,
     azurerm_managed_disk.dataDisk1
   ]
   managed_disk_id    = azurerm_managed_disk.dataDisk1.id
-  virtual_machine_id = azurerm_linux_virtual_machine.MineCraftVM.id
+  virtual_machine_id = azurerm_windows_virtual_machine.MineCraftVM.id
   lun                = "4"
   caching            = "ReadWrite"
 }

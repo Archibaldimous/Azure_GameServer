@@ -52,6 +52,17 @@ resource "azurerm_network_security_group" "NSG1" {
     source_address_prefixes    = ["70.191.107.0/24", "98.160.98.0/24", "70.185.205.0/24", "162.207.79.0/24"]
     destination_address_prefix = "*"
   }
+    security_rule {
+    name                       = "allowRDP"
+    priority                   = 104
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "3389"
+    source_address_prefixes    = ["70.191.107.0/24", "98.160.98.0/24", "70.185.205.0/24", "162.207.79.0/24"]
+    destination_address_prefix = "*"
+  }
   security_rule {
     name                       = "allowMineCraftTraffic"
     priority                   = 105
@@ -102,11 +113,6 @@ resource "azurerm_network_interface_security_group_association" "example" {
 #     public_key = var.myPublicKey
 #   }
 
-#   os_disk {
-#     caching              = "ReadWrite"
-#     storage_account_type = "Standard_LRS"
-#   }
-
 #   source_image_reference {
 #     publisher = "canonical"
 #     offer     = "0001-com-ubuntu-server-focal"
@@ -117,8 +123,27 @@ resource "azurerm_network_interface_security_group_association" "example" {
 # }
 
 resource "azurerm_windows_virtual_machine" "MineCraftVM" {
-  
+  name                = "MinecraftVaultMod"
+  resource_group_name = azurerm_resource_group.MineCraftRG.name
+  location            = azurerm_resource_group.MineCraftRG.location
+  size                = "Standard_D4s_v3"
+  admin_username      = "mason"
+  admin_password      = "{{AZURE_VM_PASSWORD}}"
+  network_interface_ids = [
+  azurerm_network_interface.MineCraftVM1NIC.id,
+  ]
 }
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "MicrosoftWindowsDesktop"
+    offer     = "Windows-10"
+    sku       = "win10-21h2-pro-g2"
+    version   = "latest"
+  }
 
 resource "azurerm_public_ip" "MineCraftVM1PIP" {
   name                = "MineCraftPIP1"

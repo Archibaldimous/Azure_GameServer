@@ -132,7 +132,7 @@ resource "azurerm_windows_virtual_machine" "MineCraftVM" {
   network_interface_ids = [
   azurerm_network_interface.MineCraftVM1NIC.id,
   ]
-}
+
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
@@ -144,6 +144,7 @@ resource "azurerm_windows_virtual_machine" "MineCraftVM" {
     sku       = "win10-21h2-pro-g2"
     version   = "latest"
   }
+}
 
 resource "azurerm_public_ip" "MineCraftVM1PIP" {
   name                = "MineCraftPIP1"

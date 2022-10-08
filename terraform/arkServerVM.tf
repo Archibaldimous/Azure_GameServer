@@ -128,7 +128,7 @@ resource "azurerm_windows_virtual_machine" "MineCraftVM" {
   location            = azurerm_resource_group.MineCraftRG.location
   size                = "Standard_D4s_v3"
   admin_username      = "mason"
-  admin_password      = "{{AZURE_VM_PASSWORD}}"
+  admin_password      = "Temp12345"
   network_interface_ids = [
   azurerm_network_interface.MineCraftVM1NIC.id,
   ]

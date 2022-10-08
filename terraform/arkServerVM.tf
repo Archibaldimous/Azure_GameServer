@@ -123,7 +123,7 @@ resource "azurerm_network_interface_security_group_association" "example" {
 # }
 
 resource "azurerm_windows_virtual_machine" "MineCraftVM" {
-  name                = "MinecraftVaultMod"
+  name                = "MinecraftVault"
   resource_group_name = azurerm_resource_group.MineCraftRG.name
   location            = azurerm_resource_group.MineCraftRG.location
   size                = "Standard_D4s_v3"

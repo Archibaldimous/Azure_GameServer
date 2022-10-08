@@ -87,32 +87,37 @@ resource "azurerm_network_interface_security_group_association" "example" {
 }
 
 
-resource "azurerm_linux_virtual_machine" "MineCraftVM" {
-  name                = "MineCraftVM1-ragnarok"
-  resource_group_name = azurerm_resource_group.MineCraftRG.name
-  location            = azurerm_resource_group.MineCraftRG.location
-  size                = "Standard_D4s_v3"
-  admin_username      = "mason"
-  network_interface_ids = [
-    azurerm_network_interface.MineCraftVM1NIC.id
-  ]
+# resource "azurerm_linux_virtual_machine" "MineCraftVM" {
+#   name                = "MineCraftVM1-ragnarok"
+#   resource_group_name = azurerm_resource_group.MineCraftRG.name
+#   location            = azurerm_resource_group.MineCraftRG.location
+#   size                = "Standard_D4s_v3"
+#   admin_username      = "mason"
+#   network_interface_ids = [
+#     azurerm_network_interface.MineCraftVM1NIC.id
+#   ]
 
-  admin_ssh_key {
-    username   = "mason"
-    public_key = var.myPublicKey
-  }
+#   admin_ssh_key {
+#     username   = "mason"
+#     public_key = var.myPublicKey
+#   }
 
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
+#   os_disk {
+#     caching              = "ReadWrite"
+#     storage_account_type = "Standard_LRS"
+#   }
 
-  source_image_reference {
-    publisher = "canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts-gen2"
-    version   = "latest"
-  }
+#   source_image_reference {
+#     publisher = "canonical"
+#     offer     = "0001-com-ubuntu-server-focal"
+#     sku       = "20_04-lts-gen2"
+#     version   = "latest"
+#   }
+  
+# }
+
+resource "azurerm_windows_virtual_machine" "MineCraftVM" {
+  
 }
 
 resource "azurerm_public_ip" "MineCraftVM1PIP" {

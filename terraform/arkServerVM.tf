@@ -105,7 +105,7 @@ resource "azurerm_linux_virtual_machine" "zomboidVM" {
   size                = "Standard_D4s_v3"
   admin_username      = "mason"
   network_interface_ids = [
-    azurerm_network_interface.arkVM1NIC.id
+    azurerm_network_interface.zomboidVM1NIC.id
   ]
 
   admin_ssh_key {

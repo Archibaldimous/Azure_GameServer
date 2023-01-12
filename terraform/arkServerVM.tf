@@ -49,7 +49,7 @@ resource "azurerm_network_security_group" "NSG1" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefixes    = ["70.191.107.0/24", "98.160.98.0/24", "70.185.205.0/24", "162.207.79.0/24"]
+    source_address_prefixes    = ["70.191.107.0/24", "98.160.98.0/24", "70.185.205.0/24", "162.207.79.0/24", "70.185.246.103/24"]
     destination_address_prefix = "*"
   }
     security_rule {
@@ -70,7 +70,7 @@ resource "azurerm_network_security_group" "NSG1" {
     access                     = "Allow"
     protocol                   = "*"
     source_port_range          = "*"
-    destination_port_ranges    = ["7777", "7778", "27015", "443", "80","27020","25565"]
+    destination_port_ranges    = ["16261", "16262", "443", "80"]
     source_address_prefix      = "Internet"
     destination_address_prefix = "*"
   }
@@ -104,10 +104,14 @@ resource "azurerm_linux_virtual_machine" "zomboidVM" {
   location            = azurerm_resource_group.zomboidRG.location
   size                = "Standard_D4s_v3"
   admin_username      = "mason"
-  admin_password      = "Temp12345"
   network_interface_ids = [
-    azurerm_network_interface.zomboidVM1NIC.id
+    azurerm_network_interface.arkVM1NIC.id
   ]
+
+  admin_ssh_key {
+    username   = "mason"
+    public_key = var.myPublicKey
+  }
 
   os_disk {
     caching              = "ReadWrite"
@@ -115,9 +119,9 @@ resource "azurerm_linux_virtual_machine" "zomboidVM" {
   }
 
   source_image_reference {
-    publisher = "MicrosoftWindowsDesktop"
-    offer     = "Windows-10"
-    sku       = "win10-21h2-pro-g2"
+    publisher = "canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts-gen2"
     version   = "latest"
   }
 }
